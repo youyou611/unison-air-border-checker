@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>エールボーダー＆平均値チェッカー</title>
+
+    <!-- Tailwind CSS と Lucide Icons の読み込み (Reactは不要) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans p-4 md:p-8 min-h-screen">
+
+    <div class="max-w-7xl mx-auto bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+
+        <!-- 画面上部：タイトルとメンバー選択 -->
+        <div class="bg-white border-b border-gray-200 px-6 py-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+                <h1 class="text-xl font-bold text-gray-900">エールボーダー＆平均値チェッカー</h1>
+                <p class="text-sm text-gray-500 mt-1">
+                    データ更新は index.html 内の `BORDER_DATA` を直接編集してください。
+                </p>
+            </div>
+
+            <div class="flex flex-col sm:flex-row items-center gap-3">
+                <div class="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-lg px-3 py-1.5 focus-within:ring-2 focus-within:ring-blue-100">
+                    <i data-lucide="search" class="w-4 h-4 text-gray-400"></i>
+                    <input type="text"
+                           id="searchInput"
+                           placeholder="メンバー検索..."
+                           class="bg-transparent border-none text-sm w-32 focus:ring-0 focus:outline-none" />
+                </div>
+                <div class="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2">
+                    <i data-lucide="user" class="w-4 h-4 text-gray-500"></i>
+                    <select id="memberSelect"
+                            class="bg-transparent border-none text-sm font-medium w-36 focus:ring-0 focus:outline-none cursor-pointer">
+                        <!-- JavaScriptで選択肢が挿入されます -->
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- データ表示テーブル -->
+        <div class="p-6">
+            <div id="tableContainer" class="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
+                <table class="w-full text-sm text-left whitespace-nowrap">
+                    <thead class="bg-gray-100 text-gray-700 font-semibold border-b border-gray-200">
+                        <tr id="tableHeader">
+                            <th class="px-4 py-3 border-r border-gray-200 sticky left-0 bg-gray-100 z-10 shadow-[1px_0_0_0_#e5e7eb]">
+                                イベント名称
+                            </th>
+                            <!-- JavaScriptで順位(1位,2位...)が挿入されます -->
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- JavaScriptでデータが挿入されます -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- データがない場合の表示 -->
+            <div id="noDataMessage" class="hidden py-12 text-center text-gray-500 bg-gray-50 rounded-lg border border-dashed border-gray-300">
+                <p>表示するデータがありません。</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =========================================================
+        // 💡 データの更新方法:
+        // 今後新しいイベントが来たら、以下のデータを直接書き換えてください。
+        // 数値がない場所は null と書いてください。
+        // =========================================================
+        const BORDER_DATA = {
+            // --- 櫻坂46 ---
+            "上村莉菜": [
+                { eventName: "⑥5周年", "1位": 60000104, "2位": 50104104, "3位": 40000104, "4位": 35000104, "5位": 33200104, "10位": 19970104, "50位": 2266851, "100位": 1649655, "300位": 906855, "500位": 331547, "1000位": 62000, "1500位": 51200, "5000位": 13500 },
+                { eventName: "④2024夏(櫻坂)", "1位": 32500104, "2位": 32000104, "3位": 28428236, "4位": 19970104, "5位": 17000104, "10位": 4649842, "50位": 2047530, "100位": 1556933, "300位": 969747, "500位": 560000, "1000位": 146091, "1500位": 94000, "5000位": 51000 },
+                { eventName: "①2024新年", "1位": 40000000, "2位": 35000000, "3位": 23000000, "4位": 21179928, "5位": 19970104, "10位": 4800000, "50位": 1865563, "100位": 1241785, "300位": 709928, "500位": 264256, "1000位": 62009, "1500位": 51051, "5000位": 12002 },
+                { eventName: "④⑤2023夏", "1位": 46000104, "2位": 44041402, "3位": 26600000, "4位": 25000104, "5位": 22222222, "10位": 7074444, "50位": 1973763, "100位": 1374713, "300位": 904716, "500位": 361492, "1000位": 68000, "1500位": 51022, "5000位": 12000 },
+                { eventName: "③4.5周年(櫻坂)", "1位": 43000104, "2位": 38141414, "3位": 37000000, "4位": 35000000, "5位": 31415926, "10位": 3813229, "50位": 2080229, "100位": 1518467, "300位": 970647, "500位": 491183, "1000位": 145000, "1500位": 94000, "5000位": 51000 },
+                { eventName: "⑥4周年", "1位": 41104104, "2位": 30104156, "3位": 30000000, "4位": 27000104, "5位": 27000103, "10位": 13000000, "50位": 2110725, "100位": 1460464, "300位": 943772, "500位": 475000, "1000位": 105993, "1500位": 87000, "5000位": 13500 }
+            ],
+            "小池美波": [
+                { eventName: "⑥5周年", "1位": 50001114, "2位": 30333333, "3位": 29661729, "4位": 28527380, "5位": 27270000, "10位": null, "50位": null, "100位": null, "300位": null, "500位": null, "1000位": null, "1500位": null, "5000位": null },
+                { eventName: "④2024夏(櫻坂)", "1位": 13367624, "2位": 12901114, "3位": 11913334, "4位": 11777777, "5位": 11617187, "10位": 4162000, "50位": null, "100位": null, "300位": null, "500位": null, "1000位": null, "1500位": null, "5000位": null },
+                { eventName: "①2024新年", "1位": 16000000, "2位": 15231494, "3位": 14111998, "4位": 13539627, "5位": 11141114, "10位": 4144000, "50位": null, "100位": null, "300位": null, "500位": null, "1000位": null, "1500位": null, "5000位": null },
+                { eventName: "①2025新年", "1位": 65001114, "2位": 37301114, "3位": 32385722, "4位": 29021114, "5位": 26418174, "10位": 7238351, "50位": 2206897, "100位": 1560243, "300位": 1039964, "500位": 442813, "1000位": 102000, "1500位": 62268, "5000位": 25001 },
+                { eventName: "④⑤2023夏", "1位": 35000373, "2位": 30001114, "3位": 19981114, "4位": 17371114, "5位": 16711114, "10位": 5644000, "50位": null, "100位": null, "300位": null, "500位": null, "1000位": null, "1500位": null, "5000位": null },
+                { eventName: "③4.5周年(櫻坂)", "1位": 15001114, "2位": 14001114, "3位": 12001114, "4位": 7000001, "5位": 6666666, "10位": 3571550, "50位": null, "100位": null, "300位": null, "500位": null, "1000位": null, "1500位": null, "5000位": null },
+                { eventName: "⑥4周年", "1位": 40001114, "2位": 36000000, "3位": 33333333, "4位": 30001114, "5位": 25001114, "10位": 12820000, "50位": null, "100位": null, "300位": null, "500位": null, "1000位": null, "1500位": null, "5000位": null }
+            ],
+            "井上梨名": [
+                { eventName: "④2025夏(櫻坂)", "1位": 25555555, "2位": 20010129, "3位": 15000000, "4位": 12500000, "5位": 12316221, "10位": 3875084, "50位": 1837992, "100位": 1290129, "300位": 711291, "500位": 315486, "1000位": 94015, "1500位": 68000, "5000位": 46000 },
+                { eventName: "③5.5周年(櫻坂)", "1位": 27000000, "2位": 24610216, "3位": 23500000, "4位": 20521400, "5位": 20010129, "10位": 5800000, "50位": 2325458, "100位": 1794166, "300位": 1197629, "500位": 563392, "1000位": 155758, "1500位": 94104, "5000位": 51000 },
+                { eventName: "①2025新年", "1位": 40000129, "2位": 31000000, "3位": 30000129, "4位": 28005519, "5位": 26918785, "10位": 7280000, "50位": null, "100位": null, "300位": null, "500位": null, "1000位": null, "1500位": null, "5000位": null },
+                { eventName: "⑥6周年", "1位": 46000129, "2位": 40000129, "3位": 37190604, "4位": 37137880, "5位": 32000000, "10位": 25010129, "50位": 2334902, "100位": 1596428, "300位": 972629, "500位": 350000, "1000位": 68000, "1500位": 56000, "5000位": 13500 }
+            ],
+            "遠藤理子": [
+                { eventName: "④2025夏(櫻坂)", "1位": 30000109, "2位": 29000000, "3位": 24242424, "4位": 22222222, "5位": 20060109, "10位": 4430225, "50位": 2202091, "100位": 1976585, "300位": 1254942, "500位": 668398, "1000位": 240000, "1500位": 119999, "5000位": 51000 },
+                { eventName: "③5.5周年(櫻坂)", "1位": 30060109, "2位": 22500109, "3位": 20060109, "4位": 18300109, "5位": 13500109, "10位": 7290109, "50位": 2973396, "100位": 2305596, "300位": 1892194, "500位": 1000000, "1000位": 331408, "1500位": 175019, "5000位": 51001 },
+                { eventName: "④2024夏(櫻坂)", "1位": 40000109, "2位": 30000109, "3位": 26000109, "4位": 25000109, "5位": 24000109, "10位": 7021594, "50位": 2667929, "100位": 2098381, "300位": 1538990, "500位": 815950, "1000位": 278001, "1500位": 120000, "5000位": 51000 }
+            ],
+
+            // --- 日向坂46 ---
+            "加藤史帆": [
+                { eventName: "⑤2024夏(日向坂)", "1位": 37777777, "2位": 30000202, "3位": 23980202, "4位": 20000202, "5位": 19980202, "10位": 6002295, "50位": 2476238, "100位": 2000001, "300位": 1277658, "500位": 720679, "1000位": 314076, "1500位": 181630, "5000位": 51001 },
+                { eventName: "②4.5周年(日向坂)", "1位": 40000000, "2位": 29000000, "3位": 22222222, "4位": 16719631, "5位": 15006201, "10位": 1067988, "50位": 51001, "100位": null, "300位": null, "500位": null, "1000位": null, "1500位": null, "5000位": null }
+            ],
+            "小西夏菜実": [
+                { eventName: "⑥5周年", "1位": 35000000, "2位": 30001003, "3位": 22524773, "4位": 20041003, "5位": 19661417, "10位": 13847611, "50位": 1926122, "100位": 1168915, "300位": 720023, "500位": 175000, "1000位": 56000, "1500位": 51016, "5000位": 10500 },
+                { eventName: "⑤2024夏(日向坂)", "1位": 35524773, "2位": 30524773, "3位": 24000773, "4位": 21524773, "5位": 21500773, "10位": 9039217, "50位": 2155271, "100位": 1750000, "300位": 1062245, "500位": 464189, "1000位": 101334, "1500位": 74000, "5000位": 51000 },
+                { eventName: "⑤2025夏(日向坂)", "1位": 23666666, "2位": 22524773, "3位": 19001003, "4位": 17016500, "5位": 15176621, "10位": 5213001, "50位": 1809487, "100位": 1370000, "300位": 922817, "500位": 394180, "1000位": 109050, "1500位": 87000, "5000位": 51000 }
+            ]
+        };
+        // =========================================================
+
+        const RANKS = ["1位", "2位", "3位", "4位", "5位", "10位", "50位", "100位", "300位", "500位", "1000位", "1500位", "5000位"];
+
+        // HTML要素の取得
+        const searchInput = document.getElementById('searchInput');
+        const memberSelect = document.getElementById('memberSelect');
+        const tableHeader = document.getElementById('tableHeader');
+        const tableBody = document.getElementById('tableBody');
+        const tableContainer = document.getElementById('tableContainer');
+        const noDataMessage = document.getElementById('noDataMessage');
+
+        // 全メンバー名の配列（あいうえお順）
+        const allMembers = Object.keys(BORDER_DATA).sort();
+
+        // テーブルのヘッダー（順位）を生成
+        RANKS.forEach(rank => {
+            const th = document.createElement('th');
+            th.className = "px-4 py-3 border-r border-gray-200 text-right min-w-[90px]";
+            th.textContent = rank;
+            tableHeader.appendChild(th);
+        });
+
+        // メンバー選択肢のプルダウンを生成・更新する関数
+        function updateMemberSelect(filterText = "") {
+            memberSelect.innerHTML = '<option value="" disabled>選択...</option>';
+
+            const filtered = allMembers.filter(m => m.includes(filterText));
+
+            filtered.forEach(member => {
+                const option = document.createElement('option');
+                option.value = member;
+                option.textContent = member;
+                memberSelect.appendChild(option);
+            });
+
+            // 検索にヒットしたメンバーがいれば、一番上の人を選択状態にする
+            if (filtered.length > 0) {
+                memberSelect.value = filtered[0];
+                renderTable(filtered[0]);
+            } else {
+                renderTable("");
+            }
+        }
+
+        // テーブルに数値を表示する関数
+        function renderTable(memberName) {
+            tableBody.innerHTML = "";
+
+            const memberData = BORDER_DATA[memberName];
+
+            if (!memberData || memberData.length === 0) {
+                tableContainer.classList.add('hidden');
+                noDataMessage.classList.remove('hidden');
+                return;
+            }
+
+            tableContainer.classList.remove('hidden');
+            noDataMessage.classList.add('hidden');
+
+            // 平均値を計算するためのデータ保管庫
+            const validSums = {};
+            const validCounts = {};
+            RANKS.forEach(r => { validSums[r] = 0; validCounts[r] = 0; });
+
+            // 各イベントの行を作成
+            memberData.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.className = "border-b border-gray-100 hover:bg-gray-50 transition-colors bg-white";
+
+                // イベント名
+                const tdEvent = document.createElement('td');
+                tdEvent.className = "px-4 py-3 border-r border-gray-200 font-medium text-gray-900 sticky left-0 bg-inherit shadow-[1px_0_0_0_#f3f4f6]";
+                tdEvent.textContent = row.eventName;
+                tr.appendChild(tdEvent);
+
+                // 各順位の数値
+                RANKS.forEach(rank => {
+                    const td = document.createElement('td');
+                    td.className = "px-4 py-3 border-r border-gray-100 text-right text-gray-600";
+
+                    const val = row[rank];
+                    if (val != null && !isNaN(val)) {
+                        td.textContent = val.toLocaleString();
+                        validSums[rank] += val;
+                        validCounts[rank]++;
+                    } else {
+                        td.innerHTML = '<span class="text-gray-300">-</span>';
+                    }
+                    tr.appendChild(td);
+                });
+
+                tableBody.appendChild(tr);
+            });
+
+            // 📊 平均値の行を作成
+            const trAvg = document.createElement('tr');
+            trAvg.className = "bg-blue-50 border-t-2 border-blue-200 font-bold text-blue-900";
+
+            const tdAvgTitle = document.createElement('td');
+            tdAvgTitle.className = "px-4 py-4 border-r border-blue-200 sticky left-0 bg-blue-50 shadow-[1px_0_0_0_#bfdbfe]";
+            tdAvgTitle.textContent = "📊 平均値";
+            trAvg.appendChild(tdAvgTitle);
+
+            RANKS.forEach(rank => {
+                const td = document.createElement('td');
+                td.className = "px-4 py-4 border-r border-blue-100 text-right";
+
+                if (validCounts[rank] > 0) {
+                    const avg = validSums[rank] / validCounts[rank];
+                    td.textContent = Math.round(avg).toLocaleString();
+                } else {
+                    td.innerHTML = '<span class="text-blue-200">-</span>';
+                }
+                trAvg.appendChild(td);
+            });
+
+            tableBody.appendChild(trAvg);
+        }
+
+        // --- イベントリスナー（操作に対する反応） ---
+
+        // 検索ボックスに入力された時
+        searchInput.addEventListener('input', (e) => {
+            updateMemberSelect(e.target.value);
+        });
+
+        // プルダウンが変更された時
+        memberSelect.addEventListener('change', (e) => {
+            renderTable(e.target.value);
+        });
+
+        // --- 初期化処理 ---
+        updateMemberSelect("");
+        lucide.createIcons(); // アイコンの描画
+
+    </script>
+</body>
+</html>
