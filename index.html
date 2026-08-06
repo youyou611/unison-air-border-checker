@@ -2,36 +2,148 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>エールボーダー表</title>
   <style>
-    body { font-family: sans-serif; padding: 15px; background: #f9f9f9; color: #333; }
-    h1 { font-size: 1.2rem; margin-bottom: 12px; }
-    .controls { margin-bottom: 12px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
-    input, select { padding: 6px 10px; font-size: 0.9rem; border: 1px solid #ccc; border-radius: 4px; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      padding: 10px;
+      background: #f4f6f9;
+      color: #333;
+      margin: 0;
+      -webkit-text-size-adjust: 100%;
+    }
+    h1 {
+      font-size: 1.15rem;
+      margin: 8px 0 12px 0;
+      text-align: center;
+      color: #1a1a1a;
+    }
+    .controls {
+      margin-bottom: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    @media (min-width: 500px) {
+      .controls { flex-direction: row; }
+    }
+    input, select {
+      padding: 10px 12px;
+      font-size: 16px; /* Prevents iOS auto-zoom on input focus */
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      width: 100%;
+      box-sizing: border-box;
+      background: #fff;
+    }
     
     .category-filters {
-      margin-bottom: 15px;
+      margin-bottom: 12px;
       padding: 10px;
       background: #fff;
-      border: 1px solid #ddd;
-      border-radius: 6px;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
       display: flex;
       flex-wrap: wrap;
-      gap: 12px;
+      gap: 8px 12px;
       font-size: 0.85rem;
       align-items: center;
     }
-    .category-filters label { display: flex; align-items: center; gap: 4px; cursor: pointer; }
-    .btn-toggle { padding: 4px 8px; font-size: 0.8rem; background: #eee; border: 1px solid #ccc; border-radius: 4px; cursor: pointer; }
+    .category-filters label {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      cursor: pointer;
+      padding: 5px 8px;
+      background: #f8f9fa;
+      border-radius: 4px;
+      border: 1px solid #eee;
+      user-select: none;
+      touch-action: manipulation;
+    }
+    .btn-toggle {
+      padding: 8px 12px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      background: #3182ce;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      width: 100%;
+      touch-action: manipulation;
+    }
+    @media (min-width: 500px) {
+      .btn-toggle { width: auto; }
+    }
 
-    table { width: 100%; border-collapse: collapse; background: #fff; font-size: 0.85rem; margin-top: 10px; }
-    th, td { border: 1px solid #ddd; padding: 8px; text-align: right; white-space: nowrap; }
-    th { background: #f0f0f0; text-align: center; }
-    th:first-child, td:first-child { text-align: center; width: 40px; position: sticky; left: 0; background: #fff; z-index: 2; }
-    th:nth-child(2), td:nth-child(2) { text-align: left; position: sticky; left: 40px; background: #fff; z-index: 2; }
-    tr.avg { font-weight: bold; background: #eef6ff; }
-    tr.avg td:first-child, tr.avg td:nth-child(2) { background: #eef6ff; }
+    .table-container {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      background: #fff;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+    th, td {
+      border-bottom: 1px solid #eee;
+      padding: 10px 8px;
+      text-align: right;
+      white-space: nowrap;
+    }
+    th {
+      background: #edf2f7;
+      font-weight: bold;
+      text-align: center;
+      color: #4a5568;
+    }
+    /* Fixed sticky columns for smooth mobile horizontal scroll */
+    th:first-child, td:first-child {
+      text-align: center;
+      width: 36px;
+      position: sticky;
+      left: 0;
+      background: #fff;
+      z-index: 3;
+      border-right: 1px solid #eee;
+    }
+    th:nth-child(2), td:nth-child(2) {
+      text-align: left;
+      position: sticky;
+      left: 36px;
+      background: #fff;
+      z-index: 3;
+      border-right: 2px solid #cbd5e0;
+      font-weight: 500;
+      max-width: 140px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    th:first-child, th:nth-child(2) {
+      background: #edf2f7;
+    }
+    tr.avg {
+      font-weight: bold;
+      background: #ebf8ff;
+      color: #2b6cb0;
+    }
+    tr.avg td:first-child, tr.avg td:nth-child(2) {
+      background: #ebf8ff;
+    }
+
+    /* Touch-friendly checkboxes */
+    input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: #3182ce;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
@@ -54,7 +166,7 @@
     <label><input type="checkbox" class="cat-filter" data-cat="cat6" checked> ⑥ 〇周年</label>
   </div>
 
-  <div style="overflow-x: auto;">
+  <div class="table-container">
     <table id="dataTable">
       <thead>
         <tr id="tableHeader">
