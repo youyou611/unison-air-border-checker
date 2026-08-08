@@ -147,13 +147,11 @@
       background: #edf2f7;
     }
 
-    /* Active / Checked rows */
     tr.row-active {
       background: #fff;
       opacity: 1.0;
     }
 
-    /* Unchecked / Faded rows moved to bottom */
     tr.row-faded {
       background: #f8f9fa;
       opacity: 0.42;
@@ -163,7 +161,6 @@
       color: #888;
     }
 
-    /* Average Summary Row */
     tr.avg {
       font-weight: bold;
       background: #ebf8ff;
@@ -192,14 +189,12 @@
     <select id="memberSelect"></select>
   </div>
 
-  <!-- 一瞬で合同 / 別々を切り替えるボタン -->
   <div class="mode-buttons">
     <button type="button" class="btn-mode active" id="btnModeAll">すべて表示</button>
     <button type="button" class="btn-mode" id="btnModeJoint">合同のみ</button>
     <button type="button" class="btn-mode" id="btnModeSeparate">別々のみ</button>
   </div>
 
-  <!-- イベント種類の一括フィルター (開催日順) -->
   <div class="category-filters">
     <button type="button" class="btn-toggle" id="selectAllBtn">全選択 / 全解除</button>
     <label><input type="checkbox" class="cat-filter" data-cat="cat1" checked> ① 新年</label>
@@ -227,7 +222,7 @@ const apiKey = "AQ.Ab8RN6LI9pyNYlKkWEgn8PSjShqA2KCYwSdQEqX1-VeeYtCVWQ";
 const RANKS = ["1位", "2位", "3位", "4位", "5位", "10位", "300位", "5000位"];
 
 const SAKURAZAKA_ACTIVE = ["遠藤光莉", "大園玲", "大沼晶保", "幸坂茉莉乃", "田村保乃", "藤吉夏鈴", "増本綺良", "松田里奈", "森田ひかる", "守屋麗奈", "山﨑天", "石森璃花", "遠藤理子", "小田倉麗奈", "小島凪紗", "谷口愛季", "中嶋優月", "的野美青", "向井純葉", "村井優", "村山美羽", "山下瞳月", "浅井恋乃未", "稲熊ひな", "勝又春", "佐藤愛桜", "中川智尋", "松本和子", "目黒陽色", "山川宇衣", "山田桃実"];
-const HINATAZAKA_ACTIVE = ["金村美玖", "小坂菜緒", "上村ひなの", "髙橋未来虹", "森本茉莉", "山口陽世", "石塚瑶季", "小西夏菜実", "清水理央", "正源司陽子", "竹内希来里", "平尾帆夏", "平岡海月", "藤嶌果歩", "宮地すみれ", "山下葉留花", "渡辺莉奈", "太田美月", "大野愛実", "片山紗希", "蔵盛妃那乃", "坂井新奈", "佐藤優羽", "下田衣珠季", "高井俐香", "鶴崎仁香", "松尾桜"];
+const HINATAZAKA_ACTIVE = ["金村美玖", "小坂菜緒", "上村ひなの", "髙橋未来虹", "森本茉莉", "山口陽世", "石塚瑶季", "小西夏菜実", "清水理央", "正源司陽子", "竹内希来里", "平尾帆夏", "平岡海月", "藤嶌果歩", "宮地すみれ", "山下葉留花", "渡辺莉奈", "大田美月", "大野愛実", "片山紗希", "蔵盛妃那乃", "坂井新奈", "佐藤優羽", "下田衣珠季", "高井俐香", "鶴崎仁香", "松尾桜"];
 const SAKURAZAKA_GRAD = ["石森虹花", "上村莉菜", "尾関梨香", "織田奈那", "小池美波", "小林由依", "齋藤冬優花", "佐藤詩織", "菅井友香", "鈴本美愉", "長沢菜々香", "土生瑞穂", "原田葵", "平手友梨奈", "守屋茜", "渡辺梨加", "渡邉理佐", "井上梨名", "関有美子", "武元唯依", "松平璃子"];
 const HINATAZAKA_GRAD = ["井口眞緒", "潮紗理菜", "影山優佳", "加藤史帆", "齊藤京子", "佐々木久美", "佐々木美玲", "高瀬愛奈", "高本彩花", "東村芽依", "河田陽菜", "富田鈴花", "丹生明里", "濱岸ひより", "松田好花", "宮田愛萌", "渡邉美穂", "岸帆夏"];
 
@@ -977,7 +972,7 @@ const BORDER_DATA = {
     {"eventName": "6.5周年エールボーダー表(櫻坂46)", "category": "cat3", "isJoint": true, "1位": 43000122, "2位": 42900122, "3位": 42000000, "4位": 39393939, "5位": 38300122, "10位": 27000122, "300位": 1543129, "5000位": 51000},
     {"eventName": "2026年度夏エールボーダー表(櫻坂46)", "category": "cat4", "isJoint": true, "1位": 50500122, "2位": 45000122, "3位": 40114097, "4位": 36470460, "5位": 30000122, "10位": 10563683, "300位": 1558668, "5000位": 38005}
   ],
-  "太田美月": [
+  "大田美月": [
     {"eventName": "新(2026)年エールボーダー表(日向坂46)", "category": "cat1", "isJoint": true, "1位": 46001207, "2位": 38395150, "3位": 38000000, "4位": 32015799, "5位": 32001207, "10位": 5917417, "300位": 720000, "5000位": 13500},
     {"eventName": "6.5周年エールボーダー表(日向坂46)", "category": "cat2", "isJoint": true, "1位": 52001207, "2位": 40151207, "3位": 30001207, "4位": 28601207, "5位": 27856609, "10位": 15000000, "300位": 700503, "5000位": 13500},
     {"eventName": "2026年度夏エールボーダー表(日向坂46)", "category": "cat5", "isJoint": true, "1位": 51001207, "2位": 49836451, "3位": 43728855, "4位": 43552789, "5位": 42001207, "10位": 5453246, "300位": 680012, "5000位": 10500}
@@ -1077,6 +1072,9 @@ RANKS.forEach(r => {
   tableHeader.appendChild(th);
 });
 
+// Remember selected member in localStorage
+const STORAGE_KEY = 'unis_selected_member';
+
 function updateSelect(filter = '') {
   memberSelect.innerHTML = '';
   let firstFound = null;
@@ -1102,15 +1100,27 @@ function updateSelect(filter = '') {
   addGroup('🌸 櫻坂46（卒業）', SAKURAZAKA_GRAD);
   addGroup('☀️ 日向坂46（卒業）', HINATAZAKA_GRAD);
 
-  if (firstFound) {
-    memberSelect.value = firstFound;
-    render(firstFound);
+  // Read saved member from localStorage
+  const savedMember = localStorage.getItem(STORAGE_KEY);
+  
+  // Check if savedMember exists in current options
+  let targetMember = firstFound;
+  if (savedMember && BORDER_DATA[savedMember]) {
+    const existsInSelect = Array.from(memberSelect.options).some(opt => opt.value === savedMember);
+    if (existsInSelect) {
+      targetMember = savedMember;
+    }
+  }
+
+  if (targetMember) {
+    memberSelect.value = targetMember;
+    render(targetMember);
   } else {
     render('');
   }
 }
 
-let userCheckedMap = {}; // eventName -> boolean
+let userCheckedMap = {};
 
 function render(memberName) {
   tableBody.innerHTML = '';
@@ -1121,13 +1131,11 @@ function render(memberName) {
     Array.from(document.querySelectorAll('.cat-filter:checked')).map(cb => cb.dataset.cat)
   );
 
-  // Separate active vs faded rows
   const activeRows = [];
   const fadedRows = [];
 
   list.forEach(row => {
     const key = row.eventName;
-    // Default checked if category active, unless user toggled
     if (!(key in userCheckedMap)) {
       userCheckedMap[key] = activeCategories.has(row.category);
     }
@@ -1172,12 +1180,10 @@ function render(memberName) {
     return tr;
   };
 
-  // 1. Render Active Rows at Top
   activeRows.forEach(row => {
     tableBody.appendChild(buildRow(row, true));
   });
 
-  // 2. Render Average Row (using Active Rows only)
   const trAvg = document.createElement('tr');
   trAvg.className = 'avg';
 
@@ -1212,16 +1218,14 @@ function render(memberName) {
   });
   tableBody.appendChild(trAvg);
 
-  // 3. Render Faded / Unchecked Rows at Bottom
   fadedRows.forEach(row => {
     tableBody.appendChild(buildRow(row, false));
   });
 }
 
-// Category Filter Listeners
 document.querySelectorAll('.cat-filter').forEach(cb => {
   cb.addEventListener('change', () => {
-    userCheckedMap = {}; // Reset custom toggles on category filter change
+    userCheckedMap = {};
     render(memberSelect.value);
   });
 });
@@ -1234,7 +1238,6 @@ document.getElementById('selectAllBtn').addEventListener('click', () => {
   render(memberSelect.value);
 });
 
-// Mode Buttons: すべて / 合同のみ / 別々のみ
 const btnModeAll = document.getElementById('btnModeAll');
 const btnModeJoint = document.getElementById('btnModeJoint');
 const btnModeSeparate = document.getElementById('btnModeSeparate');
@@ -1270,9 +1273,13 @@ checkAllRows.addEventListener('change', (e) => {
 });
 
 searchInput.addEventListener('input', e => updateSelect(e.target.value));
+
+// Save selected member on user change
 memberSelect.addEventListener('change', e => {
+  const selected = e.target.value;
+  localStorage.setItem(STORAGE_KEY, selected);
   userCheckedMap = {};
-  render(e.target.value);
+  render(selected);
 });
 
 updateSelect('');
